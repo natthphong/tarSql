@@ -15,6 +15,7 @@ public class DatabaseWebSocketServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
+
         conn.send("Welcome to YourDB!");
     }
 
@@ -26,7 +27,7 @@ public class DatabaseWebSocketServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket conn, String message) {
 
-        CommandProcessor.process(message);
+        CommandProcessor.process("",message);
     }
 
     @Override

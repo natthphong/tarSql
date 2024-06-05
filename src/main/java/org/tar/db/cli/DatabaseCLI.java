@@ -20,7 +20,7 @@ public class DatabaseCLI {
                 dbName =  sql.substring(3,sql.length()-1).trim();
                 System.out.println(dbName);
             }else {
-                CommandProcessor.process(sql);
+                CommandProcessor.process(dbName,sql);
             }
         }
 
