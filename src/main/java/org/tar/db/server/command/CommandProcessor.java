@@ -3,17 +3,24 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.create.schema.CreateSchema;
+import net.sf.jsqlparser.statement.create.table.ColumnDefinition;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.tar.db.server.schema.ColumManager;
 import org.tar.db.server.schema.SchemaManager;
 import org.tar.db.server.schema.TableManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandProcessor {
+    private static final Logger log = LoggerFactory.getLogger(CommandProcessor.class);
+
     private static  SchemaManager schemaManager = SchemaManager.loadFromFile();
 
 
@@ -49,8 +56,13 @@ public class CommandProcessor {
     private static void handleCreateTable(String dbName,CreateTable createTable) {
         Table table = createTable.getTable();
         String tableName = table.getName();
-
-        schemaManager.createTable(dbName, new TableManager(table.getSchemaName(),table));
+        List<ColumnDefinition> columnDefinitions = createTable.getColumnDefinitions();
+        List<ColumManager> columManagers = new ArrayList<>();
+        for (ColumnDefinition columnDefinition : columnDefinitions) {
+            ColumManager temp = new ColumManager(columnDefinition.getColDataType().getDataType(),columnDefinition.getColumnName(),columnDefinition.getColumnSpecs());
+            columManagers.add(temp);
+        }
+        schemaManager.createTable(dbName, new TableManager(table.getSchemaName(),columManagers));
         System.out.println("Table " + tableName + " created successfully in schema " + dbName + ".");
     }
 

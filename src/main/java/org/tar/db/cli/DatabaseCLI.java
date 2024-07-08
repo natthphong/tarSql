@@ -10,6 +10,7 @@ public class DatabaseCLI {
         Scanner scanner = new Scanner(System.in).useDelimiter(";");
 
         String dbName = (args.length == 0) ? "tarDb" : args[0];
+        //TODO connect socket
         while (true) {
             System.out.print(dbName + "> ");
             String sql = scanner.next().replace("\n", " ").replace("\r", "").trim();

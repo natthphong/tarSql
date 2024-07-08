@@ -5,18 +5,24 @@ import net.sf.jsqlparser.schema.Table;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 
 public class TableManager implements Serializable {
     @Serial
     private static final long serialVersionUID = 2L;
 
-    private String tableName;
-    Table table;
 
-    public TableManager(String tableName, Table table) {
+    private volatile long lastBlock;
+    private String tableName;
+
+    private transient List<ColumManager> columManagers;
+
+    public TableManager(String tableName,List<ColumManager> columManagers) {
         this.tableName = tableName;
-        this.table = table;
+        this.lastBlock = 0;
+        this.columManagers = columManagers;
     }
 
     public String getTableName() {
@@ -27,11 +33,21 @@ public class TableManager implements Serializable {
         this.tableName = tableName;
     }
 
-    public Table getTable() {
-        return table;
+    public List<ColumManager> getColumManagers() {
+        return columManagers;
     }
 
-    public void setTable(Table table) {
-        this.table = table;
+    public void setColumManagers(List<ColumManager> columManagers) {
+        this.columManagers = columManagers;
+    }
+
+
+
+
+    public synchronized  void setLastBlock(int lastBlock){
+        this.lastBlock = lastBlock;
+    }
+    public   long getLastBlock(){
+        return this.lastBlock;
     }
 }

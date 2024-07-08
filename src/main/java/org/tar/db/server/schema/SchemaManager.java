@@ -3,11 +3,6 @@ package org.tar.db.server.schema;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class SchemaManager implements Serializable {
@@ -33,34 +28,34 @@ public class SchemaManager implements Serializable {
     }
 
     public void createTable(String schemaName, TableManager table) {
+        System.out.println("hello" + schemaName);
+        System.out.println(schemas.keySet());
         Schema schema = schemas.get(schemaName);
         if (schema == null) {
             throw new IllegalArgumentException("Schema does not exist");
         }
+        if (schema.checkTableDub(table.getTableName())){
+            throw new IllegalArgumentException("Table already exists");
+        }
         schema.addTable(table);
-        saveToFile();
+        System.out.println("add ");
+        new Thread(this::saveToFile).start();
+
     }
 
-    public void saveToFile() {
-        File directory = new File("dist");
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
+    public synchronized void saveToFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("dist/schemas.dat"))) {
             oos.writeObject(this);
         } catch (IOException ignore) {
-            ignore.printStackTrace();
+
         }
     }
 
-    public static SchemaManager loadFromFile() {
-        File directory = new File("dist");
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
+    public synchronized static SchemaManager loadFromFile() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("dist/schemas.dat"))) {
             return (SchemaManager) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             return new SchemaManager();
         }
     }

@@ -29,4 +29,12 @@ public class Schema implements Serializable {
         tables.put(table.getTableName(), table);
     }
 
+    public boolean checkTableDub(String name){
+        try {
+            return tables.get(name)!=null;
+        }catch (Exception ex){
+            return false;
+        }
+    }
+
 }
